@@ -1,0 +1,26 @@
+{
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "ethers": "^6.0.0",
+    "hardhat": "^2.22.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "0.8.0",
+    "@openzeppelin/contracts": "5.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "name": "aegis-oracle-engine",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.ts",
+    "demo": "npx hardhat run scripts/demo.ts"
+  },
+  "keywords": [],
+  "author": "Richard00G",
+  "license": "ISC",
+  "description": ""
+}
