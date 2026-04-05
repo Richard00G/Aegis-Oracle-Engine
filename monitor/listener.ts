@@ -5,13 +5,13 @@ const abi = artifacts.abi;
 
 const provider = new ethers.JsonRpcProvider("http:127.0.0.1:8545");
 
-const contract = new ethers.Contract("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512", abi, provider);
+const contract = new ethers.Contract("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9", abi, provider);
 
-contract.on("CircuitBreakerTrigger", (price) => {
+contract.on("CircuitBreakerTriggered", (price) => {
     console.log("BREAKER ACTIVATED:", price.toString());
 });
 
-contract.on("PriceUpdate", (price) => {
+contract.on("PriceUpdated", (price) => {
     console.log("Price:", price.toString());
 });
 
@@ -23,7 +23,7 @@ contract.on("Paused", () => {
     console.log("Protocol paused:");
 });
 
-contract.on("UnPaused", () => {
+contract.on("Unpaused", () => {
     console.log("Protocol resumed:");
 });
 
