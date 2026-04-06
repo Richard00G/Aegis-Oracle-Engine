@@ -1,29 +1,78 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { contract } from "../lib/contract"; 
 import { formatUnits } from "ethers";
+import { getContract } from "@/lib/contract";
 
 export function useOracle() {
   const [price, setPrice] = useState("");
   const [paused, setPaused] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
 
   useEffect(() => {
-    const load = async () => {
-      const p = await contract.lastGoodPrice();
-      const isPaused = await contract.paused();
+    let oracle: any;
 
-      setPrice(formatUnits(p, 8)); // Asumiendo que el precio tiene 8 decimales
+    const load = async () => {
+      const contracts = await getContract();
+      oracle = contracts.contract;
+
+      const p = await oracle.lastGoodPrice();
+      const isPaused = await oracle.paused();
+      const value = Number(p) / 1e8;
+
+      setPrice(formatUnits(p, 8));
       setPaused(isPaused);
+
+      setHistory([{
+        time: new Date().toLocaleTimeString(),
+        price: value,
+      },
+    ]);
+
+      // 🎯 EVENTOS
+      oracle.on("PriceUpdated", (p: any) => {
+        const value = Number(p) / 1e8;
+
+        setPrice(value.toString());
+
+        setHistory((prev) => [
+          ...prev,
+          {
+            time: new Date().toLocaleTimeString(),
+            price: value,
+          },
+        ]);
+      });
+
+      oracle.on("Paused", () => setPaused(true));
+      oracle.on("Unpaused", () => setPaused(false));
     };
 
     load();
 
-    contract.on("PriceUpdated", (p) => {
-      setPrice(p.toString());
-    });
+    const interval = setInterval(async () => {
+      if (oracle) {
+        const p = await oracle.lastGoodPrice();
+        const value = Number(p) / 1e8;
+        setPrice(formatUnits(p, 8));
 
-    contract.on("Paused", () => setPaused(true));
-    contract.on("Unpaused", () => setPaused(false));
+        setHistory((prev) => [
+          ...prev,
+          {
+            time: new Date().toLocaleTimeString(),
+            price: value,
+          },
+        ]);
+      }
+  }   , 3000);
+
+    return () => {
+      clearInterval(interval);
+      if (oracle) {
+        oracle.removeAllListeners();
+      }
+    };
   }, []);
 
-  return { price, paused };
+  return { price, paused, history };
 }

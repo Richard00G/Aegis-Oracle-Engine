@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+.btn {
+  background-color: #00ff88;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+.btn:hover {
+  background-color: #00cc70;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #00ff88;
+}

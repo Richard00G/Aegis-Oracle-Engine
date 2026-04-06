@@ -2,47 +2,44 @@
 
 import { useOracle } from "@/hooks/useOracle";
 import { AnimatedCard } from "@/components/AnimatedCard";
-import { motion } from "framer-motion";
+import Controls from "@/components/Controls";
+import Chart from "@/components/Charts";
 
 export default function Home() {
-  const { price, paused } = useOracle();
+  const { price, paused, history } = useOracle();
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
-      <h1 className="text-4xl font-bold mb-10 text-green-400 text-center drop-shadow-[0_0_20px_#00ff88]">
-        🛡️ Aegis Oracle Engine
+
+      <h1 className="text-4xl font-bold text-green-400 mb-8 text-center">
+        🛡️ Aegis Trading Panel
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-3 gap-6">
 
-        {/* PRICE */}
-        <AnimatedCard>
-          <p className="text-green-400 drop-shadow-[0_0_20px_#00ff88]">TWAP Price</p>
+        {/* LEFT PANEL */}
+        <div className="col-span-2">
+          <Chart data={history} />
+        </div>
 
-          <motion.p
-            key={price}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-5xl font-bold text-green-400 drop-shadow-[0_0_15px_#00ff88]"
-          >
-            ${price || "..."}
-          </motion.p>
-        </AnimatedCard>
+        {/* RIGHT PANEL */}
+        <div className="flex flex-col gap-6">
 
-        {/* STATUS */}
-        <AnimatedCard>
-          <p className="text-sm text-gray-400">Status</p>
+          <AnimatedCard>
+            <p className="text-gray-400">TWAP Price</p>
+            <p className="text-4xl text-green-400">${price}</p>
+          </AnimatedCard>
 
-          <motion.p
-            animate={{
-              color: paused ? "#ff0000" : "#00ff88"
-            }}
-            className="text-red-500 animate-pulse drop-shadow-[0_0_20px_red]"
-          >
-            {paused ? "PAUSED 🚨" : "ACTIVE ✅"}
-          </motion.p>
-        </AnimatedCard>
+          <AnimatedCard>
+            <p>Status</p>
+            <p className={paused ? "text-red-500" : "text-green-400"}>
+              {paused ? "PAUSED 🚨" : "ACTIVE"}
+            </p>
+          </AnimatedCard>
 
+          <Controls />
+
+        </div>
       </div>
     </div>
   );
