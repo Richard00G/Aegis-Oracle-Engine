@@ -1,0 +1,38 @@
+name: Aegis Pipeline 🚀
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 📥 Clonar repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 🟢 Node
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 📦 Instalar deps
+      - name: Install dependencies
+        run: npm install
+
+      # 🏗️ Compilar contratos
+      - name: Compile contracts
+        run: npx hardhat compile
+
+      # 🧪 Tests (si tienes)
+      - name: Run tests
+        run: npx hardhat test
+
+      # 🎨 Build frontend
+      - name: Build Next.js
+        run: npm run build
