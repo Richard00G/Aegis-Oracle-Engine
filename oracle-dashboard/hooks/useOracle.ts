@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatUnits } from "ethers";
 import { getContract } from "@/lib/contract";
 
 export function useOracle() {
@@ -18,28 +17,26 @@ export function useOracle() {
 
       const p = await oracle.lastGoodPrice();
       const isPaused = await oracle.paused();
-      const value = Number(p) / 1e8;
 
-      setPrice(formatUnits(p, 8));
+      setPrice(p);
       setPaused(isPaused);
 
       setHistory([{
         time: new Date().toLocaleTimeString(),
-        price: value,
+        price: p,
       },
     ]);
 
       // 🎯 EVENTOS
       oracle.on("PriceUpdated", (p: any) => {
-        const value = Number(p) / 1e8;
 
-        setPrice(value.toString());
+        setPrice(p);
 
         setHistory((prev) => [
           ...prev,
           {
             time: new Date().toLocaleTimeString(),
-            price: value,
+            price: p,
           },
         ]);
       });
@@ -53,14 +50,13 @@ export function useOracle() {
     const interval = setInterval(async () => {
       if (oracle) {
         const p = await oracle.lastGoodPrice();
-        const value = Number(p) / 1e8;
-        setPrice(formatUnits(p, 8));
+        setPrice(p);
 
         setHistory((prev) => [
           ...prev,
           {
             time: new Date().toLocaleTimeString(),
-            price: value,
+            price: p,
           },
         ]);
       }

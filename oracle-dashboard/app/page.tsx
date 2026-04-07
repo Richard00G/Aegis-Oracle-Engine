@@ -4,9 +4,14 @@ import { useOracle } from "@/hooks/useOracle";
 import { AnimatedCard } from "@/components/AnimatedCard";
 import Controls from "@/components/Controls";
 import Chart from "@/components/Charts";
+import { formatUnits, parseUnits } from "ethers";
 
 export default function Home() {
   const { price, paused, history } = useOracle();
+
+  const formattedPrice = price ? formatUnits(price, 8) :"0";
+
+  const pretty = Number(formattedPrice).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
@@ -27,7 +32,9 @@ export default function Home() {
 
           <AnimatedCard>
             <p className="text-gray-400">TWAP Price</p>
-            <p className="text-4xl text-green-400">${price}</p>
+            <p className="text-4xl text-green-400 transition-all duration-300">
+              ${pretty}
+            </p>
           </AnimatedCard>
 
           <AnimatedCard>

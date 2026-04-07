@@ -92,6 +92,11 @@ contract AegisOracle is AccessControl {
     p2 = _getPrice(fallbackFeed);
     p3 = _getPrice(secondaryFeed);
 
+    _validateOracles(p1, p2);
+    _validateOracles(p2, p3);
+    _validateOracles(p1, p3);
+
+
     // MEDIANA 
     uint256 p = _mediana3(p1, p2, p3); 
 
@@ -116,6 +121,26 @@ contract AegisOracle is AccessControl {
 
     return twapPrice;
 }
+
+
+    function previewPrice() public view returns (uint256) {
+        uint256 p1 = _getPrice(priceFeed);
+        uint256 p2 = _getPrice(fallbackFeed);
+        uint256 p3 = _getPrice(secondaryFeed);
+
+        _validateOracles(p1, p2);
+        _validateOracles(p2, p3);
+        _validateOracles(p1, p3);
+
+
+        uint256 p = _mediana3(p1, p2, p3);
+
+        uint256 deviation = _checkDeviation(p);
+
+        require(deviation <= maxDeviation, "Deviation too High"); 
+
+        return p;
+    }
     
     function _updateTWAP(uint256 newPrice) internal {
         
@@ -129,8 +154,7 @@ contract AegisOracle is AccessControl {
 
         if (timeElapsed == 0) return;
 
-        twapPrice = (twapPrice * newPrice) / 2;
-
+        twapPrice = ((twapPrice * 9) + (newPrice * 1)) / 10;
         lastUpdateTime = block.timestamp;
     }
 
